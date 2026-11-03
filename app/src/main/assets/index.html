@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Обмен наклейками</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <nav class="tabs">
+    <button class="tab is-active" data-tab="exchange">Обмен</button>
+    <button class="tab" data-tab="mine">Мои наклейки</button>
+    <button class="tab" data-tab="help">Справка</button>
+  </nav>
+  <div class="album-bar">
+    <span class="album-label">Альбом</span>
+    <select class="album-select" id="album-select"></select>
+  </div>
+</header>
+
+<main>
+
+  <!-- ВКЛАДКА: ОБМЕН -->
+  <section class="page is-active" id="page-exchange">
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Сообщение собеседника</h2>
+        <span class="hint">вставьте одно сообщение целиком</span>
+      </div>
+      <textarea id="raw" rows="5" placeholder="Например:&#10;Я ищу 6, 8, 15, 21...&#10;У меня в наличии: 201 210 214..."></textarea>
+      <div class="row">
+        <button class="btn btn-primary" id="btn-paste">Вставить из буфера</button>
+        <button class="btn" id="btn-parse">Разобрать</button>
+        <button class="btn btn-ghost" id="btn-clear-raw">Очистить</button>
+      </div>
+      <div class="warn" id="raw-warn" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>У него есть</h2>
+        <span class="count" id="their-have-count">0</span>
+      </div>
+      <textarea id="their-have" rows="3" placeholder="номера, которые он готов отдать"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Он ищет</h2>
+        <span class="count" id="their-need-count">0</span>
+      </div>
+      <textarea id="their-need" rows="3" placeholder="номера, которые ему нужны"></textarea>
+    </div>
+
+    <div class="result" id="result">
+      <div class="panel panel-get">
+        <div class="panel-head">
+          <h3>Берём у него</h3>
+          <span class="big" id="get-count">0</span>
+        </div>
+        <div class="chips" id="get-chips"></div>
+        <p class="empty" id="get-empty">Нет совпадений с вашим списком «мне нужно».</p>
+      </div>
+
+      <div class="panel panel-give">
+        <div class="panel-head">
+          <h3>Отдаём ему</h3>
+          <span class="big" id="give-count">0</span>
+        </div>
+        <div class="chips" id="give-chips"></div>
+        <p class="empty" id="give-empty">Из ваших лишних ему ничего не подходит.</p>
+      </div>
+
+      <div class="balance" id="balance"></div>
+
+      <div class="row">
+        <button class="btn btn-primary" id="btn-answer">Ответ собеседнику</button>
+        <button class="btn" id="btn-done">Обмен состоялся</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ВКЛАДКА: МОИ НАКЛЕЙКИ -->
+  <section class="page" id="page-mine">
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Альбомы</h2>
+        <span class="hint">у каждого альбома свои списки</span>
+      </div>
+      <div class="row">
+        <button class="btn" id="btn-album-new">Новый</button>
+        <button class="btn btn-ghost" id="btn-album-rename">Переименовать</button>
+        <button class="btn btn-ghost" id="btn-album-delete">Удалить</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Мои лишние</h2>
+        <span class="count" id="my-have-count">0</span>
+      </div>
+      <textarea id="my-have" rows="7" placeholder="Номера дублей, которые можно отдать.&#10;Можно вставить прямо своё сообщение с названиями команд — числа распознаются сами."></textarea>
+      <div class="row">
+        <button class="btn btn-ghost" id="btn-tidy-have">Упорядочить</button>
+        <button class="btn btn-ghost" id="btn-send-have">Отправить список</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Мне нужно</h2>
+        <span class="count" id="my-need-count">0</span>
+      </div>
+      <div class="modes">
+        <label class="mode"><input type="radio" name="needmode" value="list" checked><span>Веду список «мне нужно»</span></label>
+        <label class="mode"><input type="radio" name="needmode" value="album"><span>Отмечаю вклеенные</span></label>
+      </div>
+
+      <div id="need-list-block">
+        <textarea id="my-need" rows="7" placeholder="Номера, которых не хватает"></textarea>
+        <div class="row">
+          <button class="btn btn-ghost" id="btn-tidy-need">Упорядочить</button>
+          <button class="btn btn-ghost" id="btn-send-need">Отправить список</button>
+        </div>
+      </div>
+
+      <div id="need-album-block" hidden>
+        <label class="field">
+          <span>Всего наклеек в альбоме</span>
+          <input type="number" id="album-size" min="1" max="999" inputmode="numeric">
+        </label>
+        <textarea id="owned" rows="7" placeholder="Номера, которые уже вклеены в альбом"></textarea>
+        <p class="note" id="album-note"></p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ВКЛАДКА: ПОМОЩЬ -->
+  <section class="page" id="page-help">
+    <div class="card">
+      <h2>Как пользоваться</h2>
+      <ol class="steps">
+        <li>На вкладке <b>«Мои наклейки»</b> один раз заполните свои списки: что лишнее и чего не хватает. Они сохраняются в телефоне.</li>
+        <li>Скопируйте сообщение собеседника в мессенджере (долгое нажатие → «Копировать»).</li>
+        <li>Откройте вкладку <b>«Обмен»</b> и нажмите <b>«Вставить из буфера»</b>. Приложение само разделит его сообщение на «у него есть» и «он ищет».</li>
+        <li>Снизу сразу видно, что берём и что отдаём. Кнопка <b>«Ответ собеседнику»</b> готовит текст ответа — можно сразу отправить в чат.</li>
+        <li>Когда договорились — <b>«Обмен состоялся»</b>: полученные номера уйдут из «мне нужно», отданные — из «лишних».</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>Несколько альбомов</h2>
+      <p class="note">У каждого альбома — свои «лишние» и «мне нужно». Альбом выбирается в самом верху,
+        новый заводится на вкладке «Мои наклейки» кнопкой «Новый». Обмен всегда считается по тому альбому,
+        который выбран сейчас, — если собеседник прислал список по другому альбому, сначала переключитесь.</p>
+    </div>
+
+    <div class="card">
+      <h2>Что понимает приложение</h2>
+      <ul class="steps">
+        <li>Номера через запятую, пробел или с новой строки: <code>6, 15 27</code>.</li>
+        <li>Диапазоны: <code>120-130</code> или <code>1-200</code> — это все номера подряд. Два числа через тире всегда считаются диапазоном, поэтому перечислять номера через тире не стоит.</li>
+        <li>Повторы: <code>232(3)</code>, <code>16x2</code> или просто номер, написанный дважды, — столько же штук. Первый вид встречается в объявлениях.</li>
+        <li>Названия команд, даты, время и цены пропускаются.</li>
+        <li>Разделы определяются по словам: <i>ищу, мне нужно, не хватает</i> — это «он ищет»; <i>в наличии, есть, отдам, дубли</i> — это «у него есть».</li>
+        <li>Если в сообщении таких слов нет, номера можно вручную положить в нужное поле.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Если что-то разобралось неправильно</h2>
+      <p class="note">Поля «У него есть» и «Он ищет» можно править руками — результат пересчитывается сразу. Приложение работает без интернета, ничего никуда не отправляет.</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" hidden></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <h3 id="modal-title"></h3>
+    <p id="modal-text"></p>
+    <input type="text" id="modal-input" hidden>
+    <div class="row">
+      <button class="btn btn-primary" id="modal-ok">Да</button>
+      <button class="btn btn-ghost" id="modal-cancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

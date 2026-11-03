@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+
+# Android Studio / IntelliJ
+/.idea/
+*.iml
+captures/
+
+# Локальные пути и секреты — никогда не коммитим
+/local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# Собранный APK выкладываем релизом, а не в историю
+/dist/
